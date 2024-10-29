@@ -1,11 +1,10 @@
 ﻿using AutomaticFactoryWithMsDI;
-using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 
 var services = new ServiceCollection()
               .AddTransient<UserRepository>()
-              .AddSingleton<ProxyGenerator>()
-              .AddTransient<AutoFactoryInterceptor>()
+               //.AddSingleton<ProxyGenerator>()
+               //.AddTransient<AutoFactoryInterceptor>()
               .AddAutomaticFactory<IPaymentProcessorFactory>()
               .BuildServiceProvider();
 
