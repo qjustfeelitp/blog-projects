@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace QueryFilters;
 
@@ -35,6 +36,25 @@ internal sealed class QueryContext : DbContext
 
         var configurations = this.GetServices<ISharedConfiguration>();
 
-        modelBuilder.ApplySharedEntityTypeConfigurations(configurations);
+        //modelBuilder.ApplySharedEntityTypeConfigurations(configurations);
+    }
+
+    /// <inheritdoc />
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+
+        //var conventions = this.GetServices<IModelFinalizingConvention>();
+
+        //foreach (var convention in conventions)
+        //{
+        //    configurationBuilder.Conventions.Add(_ => convention);
+        //}
+
+        //configurationBuilder.Conventions.Add(provider => provider.GetRequiredService<ICurrentDbContext>().Context.GetService<AppendOwnerIdConvention>());
+        //configurationBuilder.Conventions.Add(provider => provider.GetRequiredService<ICurrentDbContext>().Context.GetService<DeletedConvention>());
+
+        configurationBuilder.Conventions.Add(provider => provider.GetRequiredService<AppendOwnerIdConvention>());
+        configurationBuilder.Conventions.Add(provider => provider.GetRequiredService<DeletedConvention>());
     }
 }

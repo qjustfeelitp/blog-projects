@@ -28,4 +28,22 @@ public static class MutableEntityTypeExtensions
         var lambdaExpression = Expression.Lambda(expressionFilter, parameterType);
         mutableEntityType.SetQueryFilter(lambdaExpression);
     }
+
+    public static void AddOrAppendQueryFilter(this IConventionEntityType conventionEntityType, LambdaExpression expression)
+    {
+        var parameterType = Expression.Parameter(conventionEntityType.ClrType);
+
+        var expressionFilter = ReplacingExpressionVisitor.Replace(expression.Parameters.Single(), parameterType, expression.Body);
+
+        var existingFilter = conventionEntityType.GetQueryFilter();
+
+        if (existingFilter is not null)
+        {
+            var currentExpressionFilter = ReplacingExpressionVisitor.Replace(existingFilter.Parameters.Single(), parameterType, existingFilter.Body);
+            expressionFilter = Expression.AndAlso(currentExpressionFilter, expressionFilter);
+        }
+
+        var lambdaExpression = Expression.Lambda(expressionFilter, parameterType);
+        conventionEntityType.SetQueryFilter(lambdaExpression);
+    }
 }

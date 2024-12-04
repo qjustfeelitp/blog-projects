@@ -6,7 +6,8 @@ using QueryFilters;
 var applicationBuilder = new HostApplicationBuilder(args);
 
 applicationBuilder.Services
-                  .AddDbContext<QueryContext>(builder => builder.UseSqlite("Data Source=db.db;"))
+                  .AddEntityFrameworkSqlite()
+                  .AddDbContext<QueryContext>((provider, builder) => builder.UseSqlite("Data Source=db.db;").UseInternalServiceProvider(provider))
                   .AddServices();
 
 var host = applicationBuilder.Build();
